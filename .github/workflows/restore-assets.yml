@@ -1,0 +1,38 @@
+name: Restore original static assets
+on:
+  push:
+    paths:
+      - .github/workflows/restore-assets.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Recover exact files from existing Vercel deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          curl --fail --location --silent --show-error --retry 2 --max-time 60 'https://delicias-da-lu-swart.vercel.app/assets/bolo-10.webp' -o assets/bolo-10.webp
+          curl --fail --location --silent --show-error --retry 2 --max-time 60 'https://delicias-da-lu-swart.vercel.app/assets/bodoni-moda-latin-800-italic.woff2' -o assets/bodoni-moda-latin-800-italic.woff2
+          curl --fail --location --silent --show-error --retry 2 --max-time 60 'https://delicias-da-lu-swart.vercel.app/assets/Bodoni-LICENSE.txt' -o assets/Bodoni-LICENSE.txt
+          printf '%s\n' \
+            '710b4605401ed546c7c4acf474bf47e34c5f5a81  assets/bolo-10.webp' \
+            '64600a0c5ef0c85e64e56563bae79db500609125  assets/bodoni-moda-latin-800-italic.woff2' \
+            '4626b32cce4ca37b414852dd41f3caa084f50272  assets/Bodoni-LICENSE.txt' | sha1sum -c -
+      - name: Save recovered assets in repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/bolo-10.webp assets/bodoni-moda-latin-800-italic.woff2 assets/Bodoni-LICENSE.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Restore exact deployed image and licensed font [skip ci]"
+            git push origin HEAD:main
+          fi
