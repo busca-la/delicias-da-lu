@@ -5,7 +5,8 @@ Site estático da Delícias da Lu, recuperado da implantação existente na Verc
 ## Estrutura
 
 - `index.html`: página e animações (HTML, CSS e JavaScript).
-- `assets/`: imagens e fontes auxiliares da página.
+- `assets/`: fotografias dos bolos usadas na página.
+- Tipografia: Google Fonts (incluindo Bodoni Moda).
 
 ## Publicação
 
