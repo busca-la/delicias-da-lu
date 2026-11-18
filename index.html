@@ -446,6 +446,75 @@ footer{display:flex;align-items:center;justify-content:space-between;gap:18px;ba
   .story-cake img{width:100%;height:auto;animation:none!important}
 }
 
+
+/* Direção editorial do convite: uma frase própria, com assinatura da Lu.
+   Sem mais faixas, ícones ou mensagens concorrendo com o bolo. */
+.invite-screen{
+  padding-left:clamp(26px,6.6vw,104px);
+}
+.invite-body{width:min(100%,710px);max-width:min(710px,50vw)}
+.invite-eyebrow{
+  margin-bottom:clamp(19px,3svh,32px);
+  color:#ffcedc;letter-spacing:.18em;font-size:clamp(10px,.88vw,12px);
+}
+.invite-title{
+  margin:0;max-width:100%;letter-spacing:normal;
+  font-variant-ligatures:normal;line-height:1.05;
+  text-wrap:nowrap;
+}
+.invite-title .invite-lead{
+  display:block;width:max-content;max-width:100%;
+  color:#fff0f2;
+  font:600 clamp(40px,5.15vw,78px)/1.08 "DM Sans",sans-serif;
+  letter-spacing:-.073em;white-space:nowrap;
+}
+.invite-title .invite-signature{
+  display:block;width:max-content;max-width:100%;
+  margin:.01em 0 0 -0.035em;padding:0 .06em .09em 0;
+  border:0;color:#ffbed3;
+  font:italic 800 clamp(71px,7.3vw,118px)/1.13 "Bodoni Moda","Playfair Display",Georgia,serif;
+  letter-spacing:-.068em;white-space:nowrap;
+  text-shadow:0 12px 32px rgba(42,0,18,.21);
+}
+.invite-description{
+  max-width:410px;margin:clamp(12px,2.2svh,24px) 0 24px;
+  font-size:clamp(15px,1.35vw,19px);line-height:1.55;
+  color:#f8d9e3;
+}
+.invite-sub{display:none}
+@media (min-width:641px) and (max-width:1050px){
+  .invite-screen{padding-left:clamp(26px,5vw,65px)}
+  .invite-body{max-width:54vw}
+  .invite-title .invite-lead{font-size:clamp(35px,5.1vw,57px)}
+  .invite-title .invite-signature{font-size:clamp(64px,7.2vw,85px)}
+  .invite-description{max-width:300px;font-size:16px}
+}
+@media (max-width:640px){
+  .invite-screen{padding:clamp(92px,13svh,125px) 22px 48px}
+  .invite-body{max-width:100%;width:100%}
+  .invite-eyebrow{font-size:10px;letter-spacing:.12em;margin-bottom:22px}
+  .invite-title .invite-lead{font-size:clamp(33px,9.4vw,58px);letter-spacing:-.065em}
+  .invite-title .invite-signature{font-size:clamp(58px,15vw,91px);letter-spacing:-.065em;margin-left:-.02em}
+  .invite-description{max-width:310px;font-size:15px;line-height:1.45;margin:15px 0 20px}
+}
+@media (max-width:360px){
+  .invite-title .invite-lead{font-size:clamp(31px,9vw,35px)}
+  .invite-title .invite-signature{font-size:clamp(52px,14.5vw,62px)}
+}
+@media (max-height:670px) and (min-width:641px){
+  .invite-eyebrow{margin-bottom:16px}
+  .invite-title .invite-lead{font-size:clamp(36px,5vw,64px)}
+  .invite-title .invite-signature{font-size:clamp(64px,7.3vw,95px)}
+  .invite-description{margin:10px 0 18px}
+}
+@media (max-height:670px) and (max-width:640px){
+  .invite-screen{padding-top:78px}
+  .invite-eyebrow{margin-bottom:14px}
+  .invite-title .invite-lead{font-size:clamp(30px,8.7vw,43px)}
+  .invite-title .invite-signature{font-size:clamp(48px,13vw,68px)}
+  .invite-description{font-size:14px;margin:10px 0 15px}
+}
+
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@1,800&display=swap">
 </head>
@@ -460,9 +529,9 @@ footer{display:flex;align-items:center;justify-content:space-between;gap:18px;ba
 <div class="hero-hint"><a href="#convite">Descobrir <span class="arrow" aria-hidden="true">↓</span></a></div>
 <div class="invite-screen" aria-labelledby="invite-title">
  <div class="invite-body">
-  <p class="invite-eyebrow">Feito para o seu momento</p>
-  <h2 class="invite-title" id="invite-title">E se o próximo<br><em>fosse o seu?</em></h2>
-  <p class="invite-description">Tem uma ideia especial? Conta pra Lu e faça sua encomenda.</p>
+  <p class="invite-eyebrow">Da sua ideia à primeira fatia</p>
+  <h2 class="invite-title" id="invite-title"><span class="invite-lead">Você imagina.</span><em class="invite-signature">A Lu cria.</em></h2>
+  <p class="invite-description">Conta pra Lu como você sonhou o seu bolo. Cada detalhe, do seu jeito.</p>
   <a class="action-link" href="https://wa.me/5511965286784?text=Ol%C3%A1%2C%20Del%C3%ADcias%20da%20Lu!%20Quero%20fazer%20uma%20encomenda." target="_blank" rel="noopener noreferrer" aria-label="Fazer encomenda pelo WhatsApp">Fazer meu pedido <span aria-hidden="true">↗</span></a>
   <small class="invite-sub">Converse diretamente pelo WhatsApp.</small>
  </div>
