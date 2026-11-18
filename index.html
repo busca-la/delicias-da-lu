@@ -346,6 +346,119 @@ footer{display:flex;align-items:center;justify-content:space-between;gap:18px;ba
     z-index:1;
   }
 }
+
+/* 2026-11-18 — abertura editorial: o bolo é o protagonista.
+   A hero deixa de comprimir a imagem em uma linha do grid.
+   Mantém o convite, o movimento guiado pela rolagem e a versão com movimento reduzido. */
+.hero-aside{
+  position:absolute;z-index:6;left:clamp(22px,5vw,78px);right:clamp(22px,5vw,78px);
+  bottom:clamp(122px,16svh,180px);display:flex;justify-content:space-between;
+  align-items:flex-end;gap:24px;pointer-events:none;
+  color:rgba(255,227,236,.82);font:600 10px/1.55 "DM Sans",sans-serif;
+  text-transform:uppercase;letter-spacing:.19em;
+  opacity:clamp(0,calc(1 - var(--p)*3),1);
+  transform:translateY(calc(var(--p)*18px));
+}
+.hero-aside span{display:block;max-width:165px}
+.hero-aside span:before{content:"";display:block;width:29px;height:1px;margin:0 0 13px;background:rgba(255,215,226,.67)}
+.hero-aside span:last-child{text-align:right}
+.hero-aside span:last-child:before{margin-left:auto}
+@media (prefers-reduced-motion:no-preference){
+  .story-pin{
+    display:block;padding:0;
+    background:
+      radial-gradient(ellipse 45% 59% at 50% 79%,rgba(215,89,139,.21) 0%,transparent 75%),
+      radial-gradient(ellipse 85% 100% at 50% 27%,#8a294a 0%,#691630 53%,#480e25 100%);
+  }
+  .hero-title-wrap{
+    position:absolute;inset:clamp(118px,14svh,160px) 12px auto;
+    align-self:auto;z-index:7;
+    transform:translate3d(calc(var(--p)*-5vw),calc(var(--p)*-48svh),0)
+      scale(calc(1 - var(--p)*.18));
+    opacity:clamp(0,calc(1 - var(--p)*1.6),1);
+  }
+  .hero-row--first{font-size:clamp(18px,1.65vw,28px);letter-spacing:.20em}
+  .hero-row--second{
+    font-size:clamp(72px,min(10.9vw,16.2svh),165px);
+    letter-spacing:-.065em;line-height:1.06;
+    text-shadow:0 17px 35px rgba(45,0,21,.38);
+  }
+  .story-cake{
+    position:absolute;inset:auto auto clamp(-42px,-3svh,-12px) 50%;
+    justify-self:auto;margin:0;width:min(80vw,970px);height:min(78svh,760px);
+    min-height:0;z-index:5;
+    transform:translate3d(calc(-50% + var(--p)*26vw),calc(var(--p)*7svh),0)
+      scale(calc(1 - var(--p)*.18)) rotate(calc(var(--p)*2deg));
+    transform-origin:center bottom;
+    filter:drop-shadow(0 38px 32px rgba(39,0,19,.40));
+    will-change:transform;
+  }
+  .story-cake:before{
+    content:"";position:absolute;z-index:0;inset:14% 5% 4%;
+    border-radius:50%;
+    background:radial-gradient(ellipse at 50% 55%,rgba(255,173,197,.24),rgba(249,146,181,.09) 52%,transparent 73%);
+    filter:blur(25px);pointer-events:none;
+  }
+  .story-cake img{
+    position:relative;z-index:1;display:block;width:100%;height:100%;
+    object-fit:contain;object-position:center bottom;
+    animation:luCakeReveal 1.65s .28s cubic-bezier(.16,.82,.22,1) both;
+  }
+}
+@keyframes luCakeReveal{
+  from{opacity:0;transform:translate3d(0,90px,0) scale(.84);filter:blur(6px)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+@media (min-width:951px) and (max-height:720px) and (prefers-reduced-motion:no-preference){
+  .hero-title-wrap{top:clamp(95px,12svh,120px)}
+  .story-cake{height:min(80svh,655px)}
+  .hero-aside{bottom:17svh}
+}
+@media (max-width:950px){
+  .hero-aside{display:none}
+}
+@media (max-width:640px) and (prefers-reduced-motion:no-preference){
+  .story-pin{
+    background:
+      radial-gradient(ellipse 86% 57% at 52% 69%,rgba(232,92,143,.20),transparent 75%),
+      linear-gradient(180deg,#741b3b 0%,#701832 47%,#4e0e27 100%);
+  }
+  .hero-title-wrap{
+    inset:clamp(107px,13svh,138px) 5px auto;
+    transform:translate3d(0,calc(var(--p)*-46svh),0)
+      scale(calc(1 - var(--p)*.10));
+  }
+  .hero-row--first{font-size:clamp(14px,4.1vw,21px);letter-spacing:.15em}
+  .hero-row--second{
+    font-size:clamp(43px,13.8vw,86px);line-height:1.06;
+    letter-spacing:-.055em;padding:0 .01em .12em;
+    white-space:nowrap;
+  }
+  .story-cake{
+    left:50%;bottom:clamp(-20px,-1.8svh,-6px);
+    width:min(118vw,540px);height:min(65svh,570px);
+    transform:translate3d(calc(-50% + var(--p)*17vw),calc(var(--p)*12svh),0)
+      scale(calc(1 - var(--p)*.22)) rotate(calc(var(--p)*2deg));
+  }
+  .story-cake:before{inset:13% 0 3%;filter:blur(24px)}
+  .hero-hint{bottom:clamp(17px,3svh,32px);left:18px}
+  .hero-hint a{padding:15px 22px}
+}
+@media (max-width:640px) and (max-height:690px) and (prefers-reduced-motion:no-preference){
+  .hero-title-wrap{top:clamp(80px,12svh,105px)}
+  .story-cake{height:60svh;bottom:-12px}
+  .hero-hint{bottom:13px}
+}
+@media (max-width:360px) and (prefers-reduced-motion:no-preference){
+  .hero-row--second{font-size:clamp(41px,13.3vw,49px)}
+  .story-cake{width:119vw}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-aside{display:none}
+  .story-cake{width:min(88vw,575px)!important;height:auto}
+  .story-cake img{width:100%;height:auto;animation:none!important}
+}
+
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@1,800&display=swap">
 </head>
@@ -357,6 +470,7 @@ footer{display:flex;align-items:center;justify-content:space-between;gap:18px;ba
 <header class="story-nav"><a href="#inicio" class="brand">Delícias da Lu</a><a href="#trabalhos" class="nav-link">Ver bolos</a></header>
 <div class="hero-title-wrap"><h1 class="hero-title"><span class="hero-row hero-row--first"><span>A festa</span> <span>passa.</span></span><span class="hero-row hero-row--second"><span>O sabor</span> <span>fica.</span></span></h1></div>
 <div class="story-cake"><img src="assets/bolo-hero.webp" alt="Bolo rosa de dois andares com flores e pérolas" fetchpriority="high"></div>
+<div class="hero-aside" aria-hidden="true"><span>Bolos personalizados<br>Guarulhos · SP</span><span>Para celebrar<br>cada momento</span></div>
 <div class="hero-hint"><a href="#convite">Descobrir <span class="arrow" aria-hidden="true">↓</span></a></div>
 <div class="invite-screen" aria-labelledby="invite-title">
  <div class="invite-body">
