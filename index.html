@@ -515,6 +515,67 @@ footer{display:flex;align-items:center;justify-content:space-between;gap:18px;ba
   .invite-description{font-size:14px;margin:10px 0 15px}
 }
 
+
+/* Lu motion system v2 — pré-descida, composição e transições suaves */
+@media (prefers-reduced-motion:no-preference){
+ .hero-title-wrap{
+  transform:translate3d(0,calc(var(--hero-out,0)*-24px),0) scale(calc(1 - var(--hero-out,0)*.035));
+  opacity:calc(1 - var(--hero-out,0));transform-origin:center top
+ }
+ .hero-row--first,.hero-row--second{animation:none!important}
+ .hero-title{animation:luHeadingTogether 1.05s .05s cubic-bezier(.18,.78,.22,1) both}
+ .hero-hint{opacity:calc(1 - var(--hero-out,0));transform:translate3d(0,calc(var(--hero-out,0)*12px),0)}
+ .story-cake{
+  bottom:calc(var(--cake-track,0)*4svh);height:58svh;width:min(82vw,920px);
+  transform:translate3d(calc(-50% + var(--cake-track,0)*24vw),
+   calc(var(--pre-lift,0)*-10px - var(--cake-track,0)*4svh),0)
+   scale(calc(1 + var(--cake-track,0)*.24));
+  transform-origin:center bottom;will-change:transform
+ }
+ .invite-screen{
+  opacity:var(--invite-in,0);
+  transform:translate3d(0,calc((1 - var(--invite-in,0))*38px),0);
+  will-change:transform,opacity
+ }
+ .story-pin:after{
+  content:"";display:block;position:absolute;z-index:4;inset:auto 0 0;height:20svh;
+  pointer-events:none;background:linear-gradient(to top,rgba(104,21,47,.95),transparent);
+  opacity:var(--scene-seam,0)
+ }
+ .tile.observe{
+  opacity:0;transform:translate3d(0,24px,0);
+  transition:opacity 1.1s cubic-bezier(.2,.75,.2,1),transform 1.15s cubic-bezier(.2,.75,.2,1);
+  transition-delay:var(--delay,0s)
+ }
+ .tile.observe.is-seen{opacity:1;transform:none}
+}
+@keyframes luHeadingTogether{
+ from{opacity:0;transform:translateY(26px);filter:blur(3px)}
+ to{opacity:1;transform:none;filter:none}
+}
+@media (min-width:641px) and (max-height:700px) and (prefers-reduced-motion:no-preference){
+ .story-cake{height:56svh;bottom:calc(var(--cake-track,0)*4svh)}
+}
+@media (max-width:640px) and (prefers-reduced-motion:no-preference){
+ .hero-title-wrap{transform:translate3d(0,calc(var(--hero-out,0)*-16px),0) scale(calc(1 - var(--hero-out,0)*.02))}
+ .story-cake{
+  bottom:calc(68px - var(--cake-track,0)*55px);width:min(120vw,560px);height:60svh;
+  transform:translate3d(calc(-50% + var(--cake-track,0)*16vw),
+   calc(var(--pre-lift,0)*-7px),0)
+   scale(calc(1 - var(--cake-track,0)*.21));
+  opacity:calc(1 - var(--cake-track,0)*.13)
+ }
+ .invite-screen{transform:translate3d(0,calc((1 - var(--invite-in,0))*28px),0)}
+ .story-pin:after{height:14svh}
+}
+@media (max-width:640px) and (max-height:700px) and (prefers-reduced-motion:no-preference){
+ .story-cake{height:52svh;bottom:calc(63px - var(--cake-track,0)*46px)}
+}
+@media (prefers-reduced-motion:reduce){
+ .hero-title,.hero-row--first,.hero-row--second{animation:none!important}
+ .story-pin:after{display:none!important}
+}
+
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@1,800&display=swap">
 </head>
@@ -579,17 +640,67 @@ if (typeof viewer.showModal === 'function') {
 
 (()=>{
  const story=document.querySelector('.story');const pin=document.querySelector('.story-pin');const invite=document.querySelector('.invite-screen');const anchor=document.getElementById('convite');const moreMotion=matchMedia('(prefers-reduced-motion: reduce)');
- let raf=0;
- function render(){raf=0;if(moreMotion.matches){invite.classList.add('is-active');invite.removeAttribute('inert');return}
-  const rect=story.getBoundingClientRect();const distance=Math.max(1,story.offsetHeight-window.innerHeight);const progress=Math.max(0,Math.min(1,-rect.top/distance));
-  story.style.setProperty('--p',progress.toFixed(4));pin.style.setProperty('--p',progress.toFixed(4));
-  const active=progress>.45;invite.classList.toggle('is-active',active);
-  if(active){invite.removeAttribute('inert')}else{invite.setAttribute('inert','')}
-  const order=document.querySelector('.order');if(order){const p=Math.max(0,Math.min(1,(window.innerHeight-order.getBoundingClientRect().top)/(window.innerHeight+order.offsetHeight)));order.style.setProperty('--order-progress',p.toFixed(3))}
+ let raf=0,clickScroll=0;
+ const clamp01=x=>Math.max(0,Math.min(1,x));
+ const smoothstep=(a,b,p)=>{
+  const t=clamp01((p-a)/(b-a));
+  return t*t*(3-2*t);
+ };
+ function render(){
+  raf=0;
+  if(moreMotion.matches){
+   invite.classList.add('is-active');invite.removeAttribute('inert');return;
+  }
+  const rect=story.getBoundingClientRect();
+  const distance=Math.max(1,story.offsetHeight-innerHeight);
+  const progress=clamp01(-rect.top/distance);
+  /* Pré-descida: início calmo antes de mudar as cenas. */
+  const anticipation=smoothstep(0,.18,progress);
+  const headingOut=smoothstep(.27,.61,progress);
+  const cakeTrack=smoothstep(.22,.86,progress);
+  const inviteIn=smoothstep(.46,.78,progress);
+  const seam=smoothstep(.79,1,progress);
+  for(const el of [story,pin])el.style.setProperty('--p',progress.toFixed(4));
+  pin.style.setProperty('--pre-lift',anticipation.toFixed(4));
+  pin.style.setProperty('--hero-out',headingOut.toFixed(4));
+  pin.style.setProperty('--cake-track',cakeTrack.toFixed(4));
+  pin.style.setProperty('--invite-in',inviteIn.toFixed(4));
+  pin.style.setProperty('--scene-seam',seam.toFixed(4));
+  const active=inviteIn>.34;
+  invite.classList.toggle('is-active',active);
+  if(active)invite.removeAttribute('inert');else invite.setAttribute('inert','');
+  const order=document.querySelector('.order');
+  if(order){
+   const p=clamp01((innerHeight-order.getBoundingClientRect().top)/(innerHeight+order.offsetHeight));
+   order.style.setProperty('--order-progress',p.toFixed(3));
+  }
  }
  function requestRender(){if(!raf)raf=requestAnimationFrame(render)}
- addEventListener('scroll',requestRender,{passive:true});addEventListener('resize',requestRender,{passive:true});moreMotion.addEventListener?.('change',requestRender);
- function goInvite(e){if(moreMotion.matches)return;e.preventDefault();const start=story.getBoundingClientRect().top+scrollY;const end=story.offsetHeight-innerHeight;scrollTo({top:start+end*.95,behavior:'smooth'})}
+ addEventListener('scroll',requestRender,{passive:true});
+ addEventListener('resize',requestRender,{passive:true});
+ moreMotion.addEventListener?.('change',requestRender);
+ function stopClickScroll(){if(clickScroll)cancelAnimationFrame(clickScroll);clickScroll=0}
+ addEventListener('wheel',stopClickScroll,{passive:true});
+ addEventListener('touchstart',stopClickScroll,{passive:true});
+ addEventListener('keydown',e=>{
+  if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key))stopClickScroll();
+ });
+ function goInvite(e){
+  if(moreMotion.matches)return;
+  e.preventDefault();stopClickScroll();
+  const initial=scrollY;
+  const start=story.getBoundingClientRect().top+initial;
+  const distance=Math.max(1,story.offsetHeight-innerHeight);
+  const destination=start+distance*.88;
+  const started=performance.now(),duration=1150;
+  function tick(now){
+   const t=clamp01((now-started)/duration);
+   const eased=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+   scrollTo(0,initial+(destination-initial)*eased);
+   if(t<1)clickScroll=requestAnimationFrame(tick);else clickScroll=0;
+  }
+  clickScroll=requestAnimationFrame(tick);
+ }
  document.querySelector('.hero-hint a').addEventListener('click',goInvite);
  if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-seen');observer.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.1});document.querySelectorAll('.observe').forEach(el=>observer.observe(el))}else{document.querySelectorAll('.observe').forEach(el=>el.classList.add('is-seen'))}
  requestRender();
